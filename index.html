@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For Akshita 🌸</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --blush: #f9e8e8;
+      --rose: #e8b4b8;
+      --deep-rose: #c47c82;
+      --text: #5a3535;
+      --soft: #b07070;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      background: var(--blush);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, #f0c4c8, transparent);
+      top: -100px; left: -100px;
+    }
+    body::after {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, #f5d0e0, transparent);
+      bottom: -80px; right: -80px;
+    }
+    .petal {
+      position: fixed;
+      opacity: 0;
+      animation: fall linear infinite;
+      pointer-events: none;
+      z-index: 0;
+      user-select: none;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-30px) rotate(0deg); opacity: 0.6; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+    .card {
+      position: relative;
+      z-index: 10;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(232,180,184,0.4);
+      border-radius: 24px;
+      padding: 52px 52px 44px;
+      max-width: 620px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 48px rgba(180,100,110,0.1);
+      animation: fadeUp 1s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--deep-rose);
+      letter-spacing: 0.12em;
+      margin-bottom: 20px;
+      opacity: 0.8;
+    }
+    .message {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.38rem;
+      font-weight: 300;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 44px;
+    }
+    .message em {
+      font-style: italic;
+      color: var(--deep-rose);
+    }
+    .btn-row {
+      display: flex;
+      gap: 18px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn-yes {
+      background: linear-gradient(135deg, #e8b4b8, #d4878d);
+      color: white;
+      border: none;
+      padding: 14px 44px;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      box-shadow: 0 4px 20px rgba(196,124,130,0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-yes:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(196,124,130,0.45);
+    }
+    .btn-no {
+      background: transparent;
+      border: 1.5px solid var(--rose);
+      color: var(--soft);
+      padding: 14px 44px;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: opacity 0.3s;
+    }
+    .no-message {
+      display: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--deep-rose);
+      margin-top: 16px;
+      animation: fadeIn 0.5s ease both;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .stage {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(249,232,232,0.93);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 40px 24px;
+      animation: fadeIn 0.5s ease both;
+    }
+    .stage.active { display: flex; }
+    .stage-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.55rem;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.8;
+      color: var(--text);
+      max-width: 580px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .stage-attr {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      color: var(--soft);
+      letter-spacing: 0.1em;
+      margin-bottom: 44px;
+    }
+    .stage-btn {
+      background: linear-gradient(135deg, #e8b4b8, #d4878d);
+      color: white;
+      border: none;
+      padding: 14px 48px;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      box-shadow: 0 4px 20px rgba(196,124,130,0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stage-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(196,124,130,0.45);
+    }
+    .caution-tag {
+      display: inline-block;
+      background: rgba(232,180,184,0.3);
+      border: 1px solid var(--rose);
+      color: var(--deep-rose);
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 32px;
+    }
+    .heart-deco {
+      font-size: 1.4rem;
+      margin-bottom: 28px;
+      opacity: 0.6;
+      letter-spacing: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    const emojis = ['🌸','✿','❀','🌷','·'];
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement('span');
+      p.className = 'petal';
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.fontSize = (0.7 + Math.random() * 0.8) + 'rem';
+      p.style.animationDuration = (8 + Math.random() * 12) + 's';
+      p.style.animationDelay = (Math.random() * 10) + 's';
+      document.body.appendChild(p);
+    }
+  </script>
+
+  <div class="card" id="main-card">
+    <p class="card-label">a note for Akshita 🌸</p>
+    <p class="message">
+      So you read the letter and still came to this site — idk out of curiosity, pity, or the letter did some kind of heart melting magic.<br><br>
+      I know what I am doing is stupid but you already knew <em>ki kitna bada chutiya hu me.</em><br><br>
+      I do wish to tell you that I thought of many scenarios in my head and in all of them <em>I fell for you.</em><br><br>
+      I know exactly what I am trying to do and I do hope I succeed — but that's not in my hand so… lets proceed.
+    </p>
+    <div class="btn-row">
+      <button class="btn-yes" id="btn-yes">Yes 🌸</button>
+      <button class="btn-no" id="btn-no">No</button>
+    </div>
+    <p class="no-message" id="no-msg">Yeah, No was never an option if you opened this link 🌸</p>
+  </div>
+
+  <div class="stage" id="stage1">
+    <div class="caution-tag">⚠ Proceed with caution</div>
+    <p class="stage-quote">"These are some serious panty dropping stuff, so you should proceed with caution."</p>
+    <p class="stage-attr">— Raj Koothrappali, The Big Bang Theory</p>
+    <button class="stage-btn" onclick="showStage2()">I'm ready 🌸</button>
+  </div>
+
+  <div class="stage" id="stage2">
+    <div class="heart-deco">🌸 🌷 🌸</div>
+    <p class="stage-quote">"You always tell me that I will find a nice girl — but why would I hit on other women? You have more than enough personalities to keep me occupied."</p>
+    <button class="stage-btn" style="margin-top:20px" onclick="goToGallery()">Yes 💗</button>
+  </div>
+
+  <script>
+    const btnNo = document.getElementById('btn-no');
+    const noMsg = document.getElementById('no-msg');
+
+    btnNo.addEventListener('mouseenter', () => {
+      btnNo.style.opacity = '0';
+      btnNo.style.pointerEvents = 'none';
+      noMsg.style.display = 'block';
+    });
+    btnNo.addEventListener('click', () => {
+      btnNo.style.opacity = '0';
+      btnNo.style.pointerEvents = 'none';
+      noMsg.style.display = 'block';
+    });
+
+    document.getElementById('btn-yes').addEventListener('click', () => {
+      document.getElementById('stage1').classList.add('active');
+    });
+
+    function showStage2() {
+      document.getElementById('stage1').classList.remove('active');
+      document.getElementById('stage2').classList.add('active');
+    }
+
+    function goToGallery() {
+      window.location.href = 'gallery.html';
+    }
+  </script>
+</body>
+</html>

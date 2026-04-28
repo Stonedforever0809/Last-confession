@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For Akshita 🌸</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --blush: #f9e8e8;
+      --rose: #e8b4b8;
+      --deep-rose: #c47c82;
+      --text: #5a3535;
+      --soft: #b07070;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--blush);
+      font-family: 'DM Sans', sans-serif;
+      position: relative;
+    }
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, #f0c4c8, transparent);
+      top: -150px; left: -150px;
+    }
+    body::after {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, #f5d0e0, transparent);
+      bottom: -100px; right: -100px;
+    }
+
+    /* falling petals */
+    .petal {
+      position: fixed;
+      opacity: 0;
+      animation: fall linear infinite;
+      pointer-events: none;
+      z-index: 1;
+      user-select: none;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-30px) rotate(0deg); opacity: 0.5; }
+      100% { transform: translateY(110vh) rotate(400deg); opacity: 0; }
+    }
+
+    /* each photo is position:fixed and moves via JS */
+    .photo-wrap {
+      position: fixed;
+      z-index: 2;
+      cursor: default;
+      will-change: transform;
+    }
+    .polaroid {
+      background: white;
+      padding: 8px 8px 24px;
+      box-shadow: 0 4px 20px rgba(180,100,110,0.18);
+      border-radius: 2px;
+    }
+    .polaroid img {
+      display: block;
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+    }
+
+    /* center card always on top */
+    .center-card {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 300;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(232,180,184,0.45);
+      border-radius: 24px;
+      padding: 44px 48px 40px;
+      max-width: 440px;
+      width: 88vw;
+      text-align: center;
+      box-shadow: 0 8px 60px rgba(180,100,110,0.18);
+      animation: fadeUp 1s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translate(-50%, calc(-50% + 24px)); }
+      to   { opacity: 1; transform: translate(-50%, -50%); }
+    }
+    .center-label {
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      color: var(--deep-rose);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+    .center-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.75;
+      color: var(--text);
+      margin-bottom: 36px;
+    }
+    .play-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #e8b4b8, #d4878d);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      box-shadow: 0 4px 24px rgba(196,124,130,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .play-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 8px 32px rgba(196,124,130,0.55);
+    }
+    .play-btn.playing::before,
+    .play-btn.playing::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid var(--rose);
+      animation: ripple 1.8s ease-out infinite;
+      opacity: 0;
+      width: 72px; height: 72px;
+    }
+    .play-btn.playing::after { animation-delay: 0.9s; }
+    @keyframes ripple {
+      0%   { transform: scale(1); opacity: 0.7; }
+      100% { transform: scale(1.9); opacity: 0; }
+    }
+    .pause-icon { display: none; }
+    .play-btn.playing .play-icon  { display: none; }
+    .play-btn.playing .pause-icon { display: block; }
+    .play-label {
+      margin-top: 14px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--deep-rose);
+      letter-spacing: 0.05em;
+    }.song-label {
+      margin-top: 14px;
+      font-size: 0.8rem;
+      color: var(--soft);
+      letter-spacing: 0.08em;
+      opacity: 0;
+      transition: opacity 0.6s;
+    }
+    .song-label.visible { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <script>
+    // falling petals
+    const emojis = ['🌸','✿','❀','🌷','·'];
+    for (let i = 0; i < 22; i++) {
+      const p = document.createElement('span');
+      p.className = 'petal';
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.fontSize = (0.6 + Math.random() * 0.9) + 'rem';
+      p.style.animationDuration = (9 + Math.random() * 14) + 's';
+      p.style.animationDelay = (Math.random() * 12) + 's';
+      document.body.appendChild(p);
+    }
+  </script>
+
+  <!-- center card -->
+  <div class="center-card">
+    <p class="center-label">🌸 for you</p>
+    <p class="center-quote">"If I am given another chance, I will stupidly knowingly fall for you again."</p>
+    <button class="play-btn" id="playBtn" onclick="togglePlay()">
+      <svg class="play-icon" width="28" height="28" viewBox="0 0 24 24" fill="white">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+      <svg class="pause-icon" width="26" height="26" viewBox="0 0 24 24" fill="white">
+        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+      </svg>
+    </button>
+    <p class="play-label">play this 🌸</p>
+<p class="song-label" id="songLabel">♪ Make You Mine — Public</p>
+  </div>
+
+  <audio id="audio" loop>
+    <source src="make-you-mine.mp3" type="audio/mpeg"/>
+  </audio>
+
+  <script>
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+
+    // safe zone around center card so photos don't spawn on top of it
+    const SAFE = { x: W/2, y: H/2, rx: 280, ry: 230 };
+
+    function inSafeZone(x, y) {
+      return Math.abs(x - SAFE.x) < SAFE.rx && Math.abs(y - SAFE.y) < SAFE.ry;
+    }
+
+    // build photo list
+    const photos = [];
+    for (let i = 1; i <= 62; i++) photos.push(`photos/photo${i}.jpg`);
+
+    // each photo gets its own physics state
+    const items = [];
+
+    photos.forEach((src) => {
+      // pick a starting position NOT in the safe zone
+      let sx, sy;
+      do {
+        sx = 60 + Math.random() * (W - 160);
+        sy = 60 + Math.random() * (H - 160);
+      } while (inSafeZone(sx, sy));
+
+      // random slow velocity
+      let vx = (Math.random() - 0.5) * 0.8;
+      let vy = (Math.random() - 0.5) * 0.8;
+      // make sure it's actually moving
+      if (Math.abs(vx) < 0.2) vx = 0.2 * Math.sign(vx) || 0.2;
+      if (Math.abs(vy) < 0.2) vy = 0.2 * Math.sign(vy) || 0.2;
+
+      const rot = (Math.random() * 30 - 15).toFixed(1); // -15 to +15 deg
+
+      const wrap = document.createElement('div');
+      wrap.className = 'photo-wrap';
+      wrap.style.left = sx + 'px';
+      wrap.style.top  = sy + 'px';
+      wrap.style.transform = `rotate(${rot}deg)`;
+      wrap.innerHTML = `<div class="polaroid"><img src="${src}" loading="lazy"/></div>`;
+      document.body.appendChild(wrap);
+
+      items.push({ el: wrap, x: sx, y: sy, vx, vy, rot: parseFloat(rot) });
+    });
+
+    // animation loop — bounce off edges, avoid center card
+    function animate() {
+      items.forEach(item => {
+        item.x += item.vx;
+        item.y += item.vy;
+
+        const pw = 138, ph = 138; // approx polaroid size
+
+        // bounce off viewport edges
+        if (item.x < 0)       { item.x = 0;       item.vx *= -1; }
+        if (item.x > W - pw)  { item.x = W - pw;  item.vx *= -1; }
+        if (item.y < 0)       { item.y = 0;       item.vy *= -1; }
+        if (item.y > H - ph)  { item.y = H - ph;  item.vy *= -1; }
+
+        // softly repel from center safe zone
+        const cx = item.x + pw/2, cy = item.y + ph/2;
+        const dx = cx - SAFE.x,   dy = cy - SAFE.y;
+        const nx = dx / SAFE.rx,  ny = dy / SAFE.ry;
+        const dist = Math.sqrt(nx*nx + ny*ny);
+        if (dist < 1.1) {
+          const force = (1.1 - dist) * 0.04;
+          item.vx += (dx / (Math.abs(dx)+1)) * force;
+          item.vy += (dy / (Math.abs(dy)+1)) * force;
+        }
+
+        // small speed cap so nothing flies off
+        const speed = Math.sqrt(item.vx*item.vx + item.vy*item.vy);
+        if (speed > 1.2) { item.vx *= 1.2/speed; item.vy *= 1.2/speed; }
+
+        item.el.style.left = item.x + 'px';
+        item.el.style.top  = item.y + 'px';
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    // music
+    const audio     = document.getElementById('audio');
+    const playBtn   = document.getElementById('playBtn');
+    const songLabel = document.getElementById('songLabel');
+
+    function togglePlay() {
+      if (audio.paused) {
+        audio.play();
+        playBtn.classList.add('playing');
+        songLabel.classList.add('visible');
+      } else {
+        audio.pause();
+        playBtn.classList.remove('playing');
+      }
+    }
+  </script>
+</body>
+</html>
